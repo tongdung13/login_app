@@ -22,20 +22,22 @@ class ApiMiddleware
             JWTAuth::parseToken()->authenticate();
             return $next($request);
         } catch (Exception $e) {
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
                 return response()->json([
                     'status' => 2,
                     'code' => 400,
-                    'message' => 'Hết phiên đăng nhập. Vui lòng đăng nhập lại'], 200);
-            }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
+                    'message' => 'Hết phiên đăng nhập. Vui lòng đăng nhập lại',
+                    'data' => []
+                ], 200);
+            } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
                 return response()->json([
                     'status' => 2,
                     'code' => 400,
-                    'message' => 'Bạn đã hết hạn truy cập mời đăng nhập lại'], 200);
-            }else{
+                    'message' => 'Bạn đã hết hạn truy cập mời đăng nhập lại'
+                ], 200);
+            } else {
                 return response()->json(['status' => 'Authorization Token not found'], 200);
             }
         }
-
     }
 }
