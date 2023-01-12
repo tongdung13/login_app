@@ -22,9 +22,7 @@ class BlogController extends Controller
             'status' => 1,
             'code' => 200,
             'message' => 'Danh sach blog',
-            'data' => [
-                'blogs' => $response,
-            ]
+            'data' =>  $response,
         ], 200);
     }
 }
