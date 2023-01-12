@@ -16,15 +16,12 @@ use App\Http\Controllers\BlogController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::post('login', [AuthController::class, 'login']);
 
-Route::group(['middleware' => ['guest']], function () {
+
+Route::middleware('guest')->group(function () {
     Route::prefix('blogs')->group(function () {
-        Route::get('', [BlogController::class, 'index'])->withoutMiddleware("throttle:api")
-        ;
+        Route::get('', [BlogController::class, 'index']);
     });
 });
