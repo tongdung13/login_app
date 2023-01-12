@@ -20,7 +20,6 @@ class ApiMiddleware
     {
         try {
             JWTAuth::parseToken()->authenticate();
-            return $next($request);
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
                 return response()->json([
@@ -39,5 +38,6 @@ class ApiMiddleware
                 return response()->json(['status' => 'Authorization Token not found'], 200);
             }
         }
+        return $next($request);
     }
 }
