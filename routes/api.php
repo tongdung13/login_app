@@ -25,6 +25,6 @@ Route::post('login', [AuthController::class, 'login']);
 Route::group(['middleware' => ['guest']], function () {
     Route::prefix('blogs')->group(function () {
         Route::get('', [BlogController::class, 'index'])->withoutMiddleware("throttle:api")
-        ->middleware("throttle:60:1");
+        ;
     });
 });
