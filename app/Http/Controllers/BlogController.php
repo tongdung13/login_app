@@ -53,7 +53,6 @@ class BlogController extends Controller
             }
             DB::commit();
             return redirect()->route('blogs.index')->withSuccess('Them moi thanh cong');
-
         } catch (\Throwable $th) {
             DB::rollback();
             return redirect()->route('blogs.create')->withInput($request->all())->withErrors('Co loi xay ra');

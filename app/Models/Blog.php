@@ -20,8 +20,21 @@ class Blog extends Model
     public function getImageAttribute($image)
     {
         if (!empty($image)) {
-            return Storage::disk('s3')->temporaryUrl($image, now()->addMinutes(30));
+            return $this->encode_img_base64(Storage::disk('s3')->temporaryUrl($image, now()->addMinutes(30))) ;
         }
         return null;
+    }
+
+    public function encode_img_base64($img_path = false): string
+    {
+        $image = '';
+        if ($img_path) {
+            $path = $img_path;
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            return $image;
+        }
+        return $image;
     }
 }
