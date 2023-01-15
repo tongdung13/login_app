@@ -20,7 +20,7 @@ class Blog extends Model
     public function getImageAttribute($image)
     {
         if (!empty($image)) {
-            return $this->encode_img_base64(Storage::disk('s3')->temporaryUrl($image, now()->addMinutes(30))) ;
+            return  Storage::disk('s3')->temporaryUrl($image, now()->addMinutes(30));
         }
         return null;
     }
