@@ -47,6 +47,7 @@ class BlogController extends Controller
                 Storage::disk('s3')->put($filePath, file_get_contents($image));
                 $blog->image = 'blogs/' . $name;
             }
+            return $request->all();
             if (!$blog->save()) {
                 DB::rollBack();
                 return redirect()->route('blogs.create')->withInput($request->all())->withErrors('Co loi xay ra trong qua trinh lu du lieu');
