@@ -23,5 +23,6 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('guest')->group(function () {
     Route::prefix('blogs')->group(function () {
         Route::get('', [BlogController::class, 'index']);
+        Route::get('show/{id}', [BlogController::class, 'show']);
     });
 });
