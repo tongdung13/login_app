@@ -39,7 +39,8 @@ class AuthController extends Controller
             }
 
             $now = Carbon::now();
-            if ($token = JWTAuth::attempt($credentials)) {
+            if (password_verify($request->password, $user->password)) {
+                $token = JWTAuth::attempt($credentials);
                 $user->count_login_failed = 0;
                 $user->count_login = 10;
                 $user->save();
