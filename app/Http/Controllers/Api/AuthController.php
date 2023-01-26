@@ -39,63 +39,69 @@ class AuthController extends Controller
             }
 
             $now = Carbon::now();
-
-            if ($user->count_login_failed < 10) {
-                $user->count_login_failed += 1;
-                $user->count_login -= 1;
+            if (password_verify($request->password, $user->password)) {
+                if (!$token = JWTAuth::attempt($credentials)) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => 2,
+                        'code' => 401,
+                        'message' => 'Tài khoản hoặc mật khẩu sai!',
+                        'data' => []
+                    ], 200);
+                }
+                $user->count_login_failed = 0;
+                $user->count_login = 10;
                 $user->save();
+                DB::commit();
+                return response()->json([
+                    'status' => 1,
+                    'code' => 200,
+                    'message' => 'Đăng nhập thành công!',
+                    'data' => [
+                        'user' => Auth::user(),
+                        'token' => $token,
+                    ]
+                ]);
+            } else {
+                if ($user->count_login_failed < 10) {
+                    $user->count_login_failed += 1;
+                    $user->count_login -= 1;
+                    $user->save();
 
-                if ($user->count_login_failed == 10) {
-                    $user->date_login_failed = $now->addMinutes(15);
+                    if ($user->count_login_failed == 10) {
+                        $user->date_login_failed = $now->addMinutes(15);
+                        $user->save();
+                        DB::commit();
+                        return response()->json([
+                            'status' => 2,
+                            'code' => 401,
+                            'message' => 'Đăng nhập thất bại 10 lần tài khoản của bạn bị khóa trong 15 phút',
+                            'data' => []
+                        ], 200);
+                    }
+                    DB::commit();
+                    return response()->json([
+                        'status' => 2,
+                        'code' => 401,
+                        'message' => 'Không đúng mật khẩu. Bạn còn ' . $user->count_login . ' đăng nhập',
+                        'data' => []
+                    ], 200);
+                }
+                if ($user->count_login_failed >= 10 && $user->date_login_failed < date('Y-m-d H:i:s')) {
+                    $user->count_login_failed = 0;
+                    $user->count_login = 10;
+                    $user->count_login -= 1;
+                    $user->count_login_failed += 1;
                     $user->save();
                     DB::commit();
                     return response()->json([
                         'status' => 2,
                         'code' => 401,
-                        'message' => 'Đăng nhập thất bại 10 lần tài khoản của bạn bị khóa trong 15 phút',
+                        'message' => 'Đăng nhập thất bại. Bạn còn ' . $user->count_login . ' đăng nhập',
                         'data' => []
                     ], 200);
                 }
-                DB::commit();
-                return response()->json([
-                    'status' => 2,
-                    'code' => 401,
-                    'message' => 'Không đúng mật khẩu. Bạn còn ' . $user->count_login . ' đăng nhập',
-                    'data' => []
-                ], 200);
             }
-            if ($user->count_login_failed >= 10 && $user->date_login_failed < date('Y-m-d H:i:s')) {
-                $user->count_login_failed = 0;
-                $user->count_login = 10;
-                $user->count_login -= 1;
-                $user->count_login_failed += 1;
-                $user->save();
-                DB::commit();
-                return response()->json([
-                    'status' => 2,
-                    'code' => 401,
-                    'message' => 'Đăng nhập thất bại. Bạn còn ' . $user->count_login . ' đăng nhập',
-                    'data' => []
-                ], 200);
-            }
-            if (!$token = JWTAuth::attempt($credentials)) {
-                DB::rollBack();
-                return response()->json([
-                    'status' => 2,
-                    'code' => 401,
-                    'message' => 'Tài khoản hoặc mật khẩu sai!',
-                    'data' => []
-                ], 200);
-            }
-            return response()->json([
-                'status' => 1,
-                'code' => 200,
-                'message' => 'Đăng nhập thành công!',
-                'data' => [
-                    'user' => Auth::user(),
-                    'token' => $token,
-                ]
-            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
