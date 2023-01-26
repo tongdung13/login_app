@@ -18,25 +18,7 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $user = User::query()->where('email', $request->email)->first();
-            $time_before = time() - strtotime($user->date_login_failed);
 
-            if ($user->count_login_failed == 10 && $time_before < 0) {
-                $t = 0 - $time_before;
-                $m = floor($t / 60);
-                $s = $t - ($m * 60);
-                $msg = '';
-                if ($m > 0) {
-                    $msg .= $m . ' phút ';
-                }
-                $msg .= $s . ' giây';
-
-                return response()->json([
-                    'status' => 2,
-                    'code' => 401,
-                    'message' => 'Tài khoản của bạn bị khóa trong ' . $msg,
-                    'data' => []
-                ], 200);
-            }
 
             $now = Carbon::now();
             if ($token = JWTAuth::attempt($credentials)) {
@@ -92,6 +74,25 @@ class AuthController extends Controller
                         'data' => []
                     ], 200);
                 }
+            }
+            $time_before = time() - strtotime($user->date_login_failed);
+
+            if ($user->count_login_failed == 10 && $time_before < 0) {
+                $t = 0 - $time_before;
+                $m = floor($t / 60);
+                $s = $t - ($m * 60);
+                $msg = '';
+                if ($m > 0) {
+                    $msg .= $m . ' phút ';
+                }
+                $msg .= $s . ' giây';
+
+                return response()->json([
+                    'status' => 2,
+                    'code' => 401,
+                    'message' => 'Tài khoản của bạn bị khóa trong ' . $msg,
+                    'data' => []
+                ], 200);
             }
         } catch (\Throwable $th) {
             DB::rollBack();
