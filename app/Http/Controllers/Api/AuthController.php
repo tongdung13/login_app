@@ -39,16 +39,7 @@ class AuthController extends Controller
             }
 
             $now = Carbon::now();
-            if (password_verify($request->password, $user->password)) {
-                if (!$token = JWTAuth::attempt($credentials)) {
-                    DB::rollBack();
-                    return response()->json([
-                        'status' => 2,
-                        'code' => 401,
-                        'message' => 'Tài khoản hoặc mật khẩu sai!',
-                        'data' => []
-                    ], 200);
-                }
+            if ($token = JWTAuth::attempt($credentials)) {
                 $user->count_login_failed = 0;
                 $user->count_login = 10;
                 $user->save();
