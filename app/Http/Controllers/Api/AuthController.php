@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,16 +17,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         DB::beginTransaction();
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
-                DB::rollBack();
-                return response()->json([
-                    'status' => 2,
-                    'code' => 401,
-                    'message' => 'Tài khoản hoặc mật khẩu sai!',
-                    'data' => []
-                ], 200);
-            }
-            $user = JWTAuth::toUser();
+            $user = User::query()->where('email', $request->email)->first();
             $time_before = time() - strtotime($user->date_login_failed);
 
             if ($user->count_login_failed == 10 && $time_before < 0) {
@@ -41,7 +33,7 @@ class AuthController extends Controller
                 return response()->json([
                     'status' => 2,
                     'code' => 401,
-                    'message' => 'Email của bạn bị khóa trong ' . $msg,
+                    'message' => 'Tài khoản của bạn bị khóa trong ' . $msg,
                     'data' => []
                 ], 200);
             }
@@ -52,10 +44,11 @@ class AuthController extends Controller
                 $user->count_login_failed += 1;
                 $user->count_login -= 1;
                 $user->save();
+
                 if ($user->count_login_failed == 10) {
                     $user->date_login_failed = $now->addMinutes(15);
                     $user->save();
-
+                    DB::commit();
                     return response()->json([
                         'status' => 2,
                         'code' => 401,
@@ -63,7 +56,7 @@ class AuthController extends Controller
                         'data' => []
                     ], 200);
                 }
-
+                DB::commit();
                 return response()->json([
                     'status' => 2,
                     'code' => 401,
@@ -77,7 +70,7 @@ class AuthController extends Controller
                 $user->count_login -= 1;
                 $user->count_login_failed += 1;
                 $user->save();
-
+                DB::commit();
                 return response()->json([
                     'status' => 2,
                     'code' => 401,
@@ -85,7 +78,15 @@ class AuthController extends Controller
                     'data' => []
                 ], 200);
             }
-
+            if (!$token = JWTAuth::attempt($credentials)) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 2,
+                    'code' => 401,
+                    'message' => 'Tài khoản hoặc mật khẩu sai!',
+                    'data' => []
+                ], 200);
+            }
             return response()->json([
                 'status' => 1,
                 'code' => 200,
