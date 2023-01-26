@@ -13,7 +13,7 @@
                         <label for="">Title</label>
                         <input type="text" name="title" class="form-control" value="{{ old('title') }}" id="">
                         <div class="error">
-                            @if($errors->any())
+                            @if ($errors->any())
                                 <p style="color: red">{{ $errors->first('title') }}</p>
                             @endif
                         </div>
@@ -22,7 +22,7 @@
                         <label for="">Image</label>
                         <input type="file" name="image" class="form-control" id="">
                         <div class="error">
-                            @if($errors->any())
+                            @if ($errors->any())
                                 <p style="color: red">{{ $errors->first('image') }}</p>
                             @endif
                         </div>
@@ -31,9 +31,9 @@
                 <div class="col-6">
                     <div class="form-group">
                         <label for="">Content</label>
-                        <textarea name="content" class="form-control" style="height: 98px">{{ old('content') }}</textarea>
+                        <textarea name="content" class="form-control" style="height: 98px" id="description">{{ old('content') }}</textarea>
                         <div class="error">
-                            @if($errors->any())
+                            @if ($errors->any())
                                 <p style="color: red">{{ $errors->first('content') }}</p>
                             @endif
                         </div>
@@ -47,7 +47,4 @@
             </div>
         </form>
     </div>
-
 @endsection
-
-
