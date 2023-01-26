@@ -35,7 +35,7 @@
                             <td>{{ ++$key }}</td>
                             <td>{{ $blog->title }}</td>
                             <td>
-                                <textarea cols="30" rows="2">{{ $blog->content }}</textarea>
+                                <textarea cols="30" rows="2">{!! $blog->content !!}</textarea>
                             </td>
                             <td>
                                 <img src="{{ $blog->image }}" alt="" srcset="{{ $blog->image }}" style="width: 100px">
