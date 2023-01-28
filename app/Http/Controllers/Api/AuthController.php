@@ -18,6 +18,15 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $user = User::query()->where('email', $request->email)->first();
+            if (empty($user)) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 2,
+                    'code' => 401,
+                    'message' => 'Tài khoản không tồn tại trên hệ thống',
+                    'data' => []
+                ], 200);
+            }
             $time_before = time() - strtotime($user->date_login_failed);
 
             if ($user->count_login_failed == 10 && $time_before < 0) {
