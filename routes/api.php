@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\BlogController;
 
 
 Route::post('login', [AuthController::class, 'login']);
+Route::get('logout', [AuthController::class, 'logout']);
 
 
 Route::middleware('guest')->group(function () {
