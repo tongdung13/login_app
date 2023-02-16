@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -57,5 +58,11 @@ class BlogController extends Controller
             DB::rollback();
             return redirect()->route('blogs.create')->withInput($request->all())->withErrors('Co loi xay ra');
         }
+    }
+
+    public function pdf()
+    {
+        $pdf = Pdf::loadView('test')->setPaper('A4', 'portrait');
+        return $pdf->stream('test.pdf');
     }
 }
