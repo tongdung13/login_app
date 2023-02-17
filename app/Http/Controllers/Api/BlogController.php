@@ -58,11 +58,12 @@ class BlogController extends Controller
         $pdf = Pdf::loadView('test')->setPaper('A4', 'portrait');
 
         $fileName = md5(time() . rand(0, 999999)) . '.' . 'pdf';
-
+        $count = TestSaveFile::query()->where('test', $request->get('test'))->count();
 
         $test = new TestSaveFile();
         $test->test = 1;
         $test->file_name = $fileName;
+        $test->numerical_order = $count + 1;
         $test->save();
         Storage::disk('s3')->put($fileName, $pdf->output());
         return response()->json($test);

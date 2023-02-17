@@ -15,9 +15,9 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <td>#</td>
-                    <td>File name</td>
-
+                    <th>#</th>
+                    <th>File name</th>
+                    <th>Date save</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,6 +35,7 @@
                             <td>
                                 <a href="{{ $blog->file_name }}">File Pdf</a>
                             </td>
+                            <td>{{ !empty($blog->created_at) ? date('d-m-Y H:i:s', strtotime($blog->created_at)) : '' }}</td>
                         </tr>
                     @endforeach
                 @endif
