@@ -25,4 +25,6 @@ Route::prefix('blogs')->group(function () {
     Route::get('test', [BlogController::class, 'pdf'])->name('blogs.pdf');
 });
 
+Route::get('test', [BlogController::class, 'test'])->name('test');
+
 

@@ -27,3 +27,5 @@ Route::middleware('guest')->group(function () {
         Route::get('show/{id}', [BlogController::class, 'show']);
     });
 });
+
+Route::post('test', [BlogController::class, 'pdf']);

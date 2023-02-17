@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\TestSaveFile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -64,5 +65,11 @@ class BlogController extends Controller
     {
         $pdf = Pdf::loadView('test')->setPaper('A4', 'portrait');
         return $pdf->stream('test.pdf');
+    }
+
+    public function test()
+    {
+        $pdf = TestSaveFile::query()->get();
+        return view('pdf.index', compact('pdf'));
     }
 }

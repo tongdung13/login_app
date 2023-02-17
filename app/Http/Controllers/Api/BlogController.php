@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\TestSaveFile;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -47,5 +51,20 @@ class BlogController extends Controller
             'message' => 'Chi tiết Bài viết',
             'data' => $blog
         ], 200);
+    }
+
+    public function pdf(Request $request)
+    {
+        $pdf = Pdf::loadView('test')->setPaper('A4', 'portrait');
+
+        $fileName = md5(time() . rand(0, 999999)) . '.' . 'pdf';
+
+
+        $test = new TestSaveFile();
+        $test->test = 1;
+        $test->file_name = $fileName;
+        $test->save();
+        Storage::disk('s3')->put($fileName, $pdf->output());
+        return response()->json($test);
     }
 }
