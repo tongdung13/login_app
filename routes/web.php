@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TestSocketController;
 use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,5 +27,6 @@ Route::prefix('blogs')->group(function () {
 });
 
 Route::get('test', [BlogController::class, 'test'])->name('test');
+Route::get('socket', [TestSocketController::class, 'index'])->name('socket.test');
 
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TestSocketController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -29,3 +30,4 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('test', [BlogController::class, 'pdf']);
+Route::post('socket-test', [TestSocketController::class, 'postSocket']);
